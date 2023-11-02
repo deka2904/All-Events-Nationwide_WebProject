@@ -3,19 +3,31 @@
     <div>
         <img src="/bgimg3.jpg" class="w-100" style="height: 250px;">
     </div>
-    <div class="row" style="margin: 10px 0 0 0;">
-        <div th:each="question, iterStat : ${questionList}" class="col-md-4" style="padding: 0;">
-            <div class="card" style="height: auto; margin: 10px 0;">
-                <div class="row g-0" style="display: flex; align-items: center;">
-                    <div class="col-md-4">
+    <div style="display : flex; justify-content : end; margin: 10px 0 0 0;">
+        <div class="text-md-end" style="padding:0;">
+            <a class="btn btn-sm btn-outline-secondary" th:href="@{|/question/create|}">게시글 등록</a>
+        </div>
+    </div>
+    <div class="container" style="margin-bottom : 10px;">
+        <div class="row row-cols-3">
+            <div th:each="question : ${paging}" class="col" style="padding: 0;">
+                <div class="card" style="display:flex; flex-direction:row; height: 200px; margin: 10px 5px 0 5px;">
+                    <div style="width:30%;">
                         <img src="/dj.jpg" class="img-fluid" style="object-fit: cover; width: 100%; height: 100%;">
                     </div>
-                    <div class="col-md-8">
-                        <div class="card-body d-flex flex-column justify-content-between" style="height: 100%;">
-                            <h5 class="card-title">
+                    <div style="width:70%;">
+                        <div class="card-body d-flex flex-column" style="height: 100%;">
+                            <p style="height: 15%; font-weight: bold; font-size: 12px; margin: 0; background-color: lightgray; border-radius: 8px; display: flex; align-items: center; padding-left: 5px;">
+                                <span th:if="${question.author != null}" th:text="${question.category.category}"></span>
+                            </p>
+                            <p class="card-title" style="margin:0; overflow:hidden; height:30%; font-weight: bold; padding-top:5px;">
                                 <a th:href="@{|/question/detail/${question.id}|}" th:text="${question.subject}"></a>
-                            </h5>
-                            <p class="card-text">
+                            </p>
+                            <p class="card-text" style="margin: 0; overflow: hidden; height: 40%; padding-top: 5px;">
+                                <a th:text="${#strings.substring(question.content, 0, 5)}" th:if="${#strings.length(question.content) > 5}"></a>
+                                <a th:text="${question.content}" th:unless="${#strings.length(question.content) > 5}"></a>
+                            </p>
+                            <p class="card-text" style="text-align:end; height:15%; font-size:12px; display: flex; justify-content:end; align-items: end;">
                                 <span th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></span>
                             </p>
                         </div>
@@ -24,13 +36,46 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-6">
-        </div>
-        <div class="col-md-6 text-md-end">
-            <a class="btn btn-sm btn-outline-secondary" th:href="@{|/question/create|}">게시글 등록</a>
-        </div>
+    <!-- 페이징처리 시작 -->
+    <div th:if="${!paging.isEmpty()}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{|?page=${paging.number-1}|}">
+                    <span>이전</span>
+                </a>
+            </li>
+            <li th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
+                th:classappend="${page == paging.number} ? 'active'"
+                class="page-item">
+                <a th:text="${page}" class="page-link" th:href="@{|?page=${page}|}"></a>
+            </li>
+            <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
+                <a class="page-link" th:href="@{|?page=${paging.number+1}|}">
+                    <span>다음</span>
+                </a>
+            </li>
+        </ul>
     </div>
+    <!-- 페이징처리 끝 -->
+    <form th:action="@{/question/list}" method="get" id="searchForm">
+        <input type="hidden" id="kw" name="kw" th:value="${kw}">
+        <input type="hidden" id="page" name="page" th:value="${paging.number}">
+    </form>
 </div>
-
+<script layout:fragment="script" type='text/javascript'>
+    const page_elements = document.getElementsByClassName("page-link");
+    Array.from(page_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            document.getElementById('page').value = this.dataset.page;
+            document.getElementById('searchForm').submit();
+        });
+    });
+    const btn_search = document.getElementById("btn_search");
+    btn_search.addEventListener('click', function() {
+        document.getElementById('kw').value = document.getElementById('search_kw').value;
+        document.getElementById('page').value = 0;  // 검색버튼을 클릭할 경우 0페이지부터 조회한다.
+        document.getElementById('searchForm').submit();
+    });
+</script>
 </html>

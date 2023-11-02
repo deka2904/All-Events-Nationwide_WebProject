@@ -15,15 +15,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public SiteUser create(String name, String userid, String nickname, String password, String phoneNumber, String email, String address) {
+    public SiteUser create(String userid, String nickname, String password, String email) {
         SiteUser user = new SiteUser();
-        user.setName(name);
         user.setUserid(userid);
         user.setNickname(nickname);
         user.setPassword(passwordEncoder.encode(password));
-        user.setPhoneNumber(phoneNumber);
         user.setEmail(email);
-        user.setAddress(address);
         this.userRepository.save(user);
         return user;
     }
