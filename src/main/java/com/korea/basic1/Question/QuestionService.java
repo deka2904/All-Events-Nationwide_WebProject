@@ -2,6 +2,7 @@ package com.korea.basic1.Question;
 
 import com.korea.basic1.Category.Category;
 import com.korea.basic1.DataNotFoundException;
+import com.korea.basic1.User.SiteUser;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,12 +20,13 @@ public class QuestionService {
         return this.questionRepository.findAll();
     }
 
-    public void create(String subject, String content, Category category) {
+    public void create(String subject, String content, Category category, SiteUser user) {
         Question q = new Question();
         q.setSubject(subject);
         q.setContent(content);
         q.setCreateDate(LocalDateTime.now());
         q.setCategory(category);
+        q.setAuthor(user);
         this.questionRepository.save(q);
     }
 

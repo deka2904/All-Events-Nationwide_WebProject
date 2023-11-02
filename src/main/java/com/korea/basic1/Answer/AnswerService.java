@@ -2,6 +2,7 @@ package com.korea.basic1.Answer;
 
 
 import com.korea.basic1.Question.Question;
+import com.korea.basic1.User.SiteUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,11 +26,12 @@ public class AnswerService {
         Pageable pageable = PageRequest.of(page, 2, Sort.by(sorts));
         return this.answerRepository.findAll(pageable);
     }
-    public void create(Question question, String content) {
+    public void create(Question question, String content, SiteUser author) {
         Answer answer = new Answer();
         answer.setContent(content);
         answer.setCreateDate(LocalDateTime.now());
         answer.setQuestion(question);
+        answer.setAuthor(author);
         this.answerRepository.save(answer);
     }
 }

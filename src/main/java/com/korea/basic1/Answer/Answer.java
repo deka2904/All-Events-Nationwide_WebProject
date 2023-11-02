@@ -3,6 +3,7 @@ package com.korea.basic1.Answer;
 import java.time.LocalDateTime;
 
 import com.korea.basic1.Question.Question;
+import com.korea.basic1.User.SiteUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,4 +23,7 @@ public class Answer {
 
     @ManyToOne
     private Question question;
+
+    @ManyToOne
+    private SiteUser author;
 }

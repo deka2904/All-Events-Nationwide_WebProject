@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.korea.basic1.Answer.Answer;
 import com.korea.basic1.Category.Category;
+import com.korea.basic1.User.SiteUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,4 +31,7 @@ public class Question {
 
     @ManyToOne
     private Category category;
+
+    @ManyToOne
+    private SiteUser author;
 }
