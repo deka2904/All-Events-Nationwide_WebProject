@@ -3,7 +3,8 @@
     <div class="text-start">
         <h1>글쓰기</h1>
     </div>
-    <form th:action="@{/question/create}" th:object="${questionForm}" method="post">
+    <form th:object="${questionForm}" method="post" enctype="multipart/form-data">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <div class="g-2 my-3 border-bottom pb-3" style="display:flex;">
             <div>
                 <span style="font-family: 'Cursive', cursive; font-size: 25px; color: black; padding:0 10px 0 0;">To.</span>
@@ -19,7 +20,7 @@
             </div>
         </div>
         <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
-            <div th:each="err : ${#fields.allErrors()}" th:text="${err}" />
+            <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
         </div>
         <div class="mb-3">
             <label for="subject" class="form-label">제목</label>
@@ -28,6 +29,9 @@
         <div class="mb-3">
             <label for="content" class="form-label">내용</label>
             <textarea th:field="*{content}" class="form-control" rows="10"></textarea>
+        </div>
+        <div class="mb-3">
+            <input type="file" name="file">
         </div>
         <div><br></div>
         <input type="submit" value="저장하기" class="btn btn-dark my-2">

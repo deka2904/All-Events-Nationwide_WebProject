@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>웹 채팅</title>
+    <link rel="stylesheet" href="/chat.css">
+</head>
+<body>
+<div id="chat-container">
+    <div id="chat-output">
+        <ul th:each="message, i : ${queryList}">
+            <li th:text="${message}" class="sent"></li>
+            <li th:text="${answerList[i.index]}" class="received"></li>
+        </ul>
+    </div>
+    <form id="chat-form" th:action="@{/chatbot}" method="post">
+        <input type="text" name="query" id="query" placeholder="메시지를 입력하세요">
+        <button type="submit">전송</button> <!-- 버튼으로 수정 -->
+    </form>
+</div>
+</body>
+</html>

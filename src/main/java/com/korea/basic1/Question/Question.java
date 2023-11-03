@@ -2,6 +2,7 @@ package com.korea.basic1.Question;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import com.korea.basic1.Answer.Answer;
 import com.korea.basic1.Category.Category;
@@ -32,6 +33,15 @@ public class Question {
     @ManyToOne
     private Category category;
 
+    private LocalDateTime modifyDate;
+
     @ManyToOne
     private SiteUser author;
+
+    @ManyToMany
+    Set<SiteUser> voter;
+
+    private String filepath;
+
+    private String filename;
 }

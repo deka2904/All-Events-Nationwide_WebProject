@@ -1,6 +1,7 @@
 package com.korea.basic1.Answer;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import com.korea.basic1.Question.Question;
 import com.korea.basic1.User.SiteUser;
@@ -26,4 +27,9 @@ public class Answer {
 
     @ManyToOne
     private SiteUser author;
+
+    private LocalDateTime modifyDate;
+
+    @ManyToMany
+    Set<SiteUser> voter;
 }

@@ -16,8 +16,8 @@
         <div class="row flex-nowrap justify-content-between align-items-center">
             <div class="col-4 pt-1">
                 <div class="container-fluid" style="padding:0; display:flex;">
-                    <input class="form-control me-2" type="text" id="search_kw2" th:value="${kw}" style="width:150px;" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-secondary" style="padding:0;" type="button" id="btn_search2">
+                    <input class="form-control me-2" type="text" id="search_kw" th:value="${kw}" style="width:150px;" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-secondary" style="padding:0;" type="button" id="btn_search">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
                              stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="mx-3" role="img"
                              viewBox="0 0 24 24"><title>Search</title>
@@ -28,7 +28,7 @@
                 </div>
             </div>
             <div class="col-4 text-center">
-                <a class="blog-header-logo text-body-emphasis text-decoration-none" th:href="@{|/question/list|}"
+                <a class="blog-header-logo text-body-emphasis text-decoration-none" th:href="@{|/question/categorylist/0|}"
                    style="font-family: 'Cursive', cursive; font-size: 2rem; color: black;">All events nationwide</a>
             </div>
             <div class="col-4 d-flex justify-content-end align-items-center">
@@ -38,15 +38,20 @@
                 <a class="btn btn-sm btn-outline-secondary" sec:authorize="isAnonymous()" th:href="@{/user/login}" style="margin: 3px;">Sign in</a>
                 <a class="btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:href="@{/user/logout}" style="margin: 3px;">Sign out</a>
                 <a class="btn btn-sm btn-outline-secondary" th:href="@{/user/signup}" style="margin: 3px;">Sign up</a>
+                <div class="floatMenu on">
+                    <a href="javascript:void(0);" onclick="window.open('http://localhost:8088/chatbot','chatbotEhwa','scrollbars=no,width=400,height=600,left=0,top=0');return false;">
+                        <img src="/chatbot.jpg" style="position: fixed; bottom: 50px; right: 180px; width: 100px; height: 100px;">
+                    </a>
+                </div>
             </div>
         </div>
     </header>
     <div class="nav-scroller py-1 mb-3" style="border-bottom: 2px solid;">
         <nav class="nav nav-underline justify-content-around">
-            <a class="nav-item nav-link link-body-emphasis active" href="#" style="color: black;">자유게시판</a>
-            <a class="nav-item nav-link link-body-emphasis" href="#" style="color: black;">행사게시판</a>
-            <a class="nav-item nav-link link-body-emphasis" href="#" style="color: black;">문의사항</a>
-            <a class="nav-item nav-link link-body-emphasis" href="#" style="color: black;">Q&A</a>
+            <a class="nav-item nav-link link-body-emphasis active" th:href="@{|/question/categorylist/1|}" style="color: black;">자유게시판</a>
+            <a class="nav-item nav-link link-body-emphasis" th:href="@{|/question/categorylist/2|}" style="color: black;">행사게시판</a>
+            <a class="nav-item nav-link link-body-emphasis" th:href="@{|/question/categorylist/3|}" style="color: black;">문의사항</a>
+            <a class="nav-item nav-link link-body-emphasis" th:href="@{|/question/categorylist/4|}" style="color: black;">Q&A</a>
         </nav>
     </div>
     <!-- 기본 템플릿 안에 삽입될 내용 Start -->
@@ -54,6 +59,9 @@
     <!-- 기본 템플릿 안에 삽입될 내용 End -->
     <!-- Bootstrap JS -->
     <script th:src="@{/bootstrap.min.js}"></script>
+    <!-- 자바스크립트 Start -->
+    <th:block layout:fragment="script"></th:block>
+    <!-- 자바스크립트 End -->
 </div>
 </body>
 </html>
