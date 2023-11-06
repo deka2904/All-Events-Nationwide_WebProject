@@ -16,7 +16,7 @@
         <div class="row flex-nowrap justify-content-between align-items-center">
             <div class="col-4 pt-1">
                 <div class="container-fluid" style="padding:0; display:flex;">
-                    <input class="form-control me-2" type="text" id="search_kw" th:value="${kw}" style="width:150px;" placeholder="Search" aria-label="Search">
+                    <input class="form-control me-2" type="text" id="search_kw" th:value="${kw}" style="width:200px;" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-secondary" style="padding:0;" type="button" id="btn_search">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
                              stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="mx-3" role="img"
@@ -33,16 +33,11 @@
             </div>
             <div class="col-4 d-flex justify-content-end align-items-center">
                 <div>
-                    <span style=" margin: 3px; font-size: 15px; font-weight: bold; color: black; font-family: 'Arial', sans-serif;">조용재님</span>
+                    <span style=" margin: 0 10px 0 10px; font-size: 15px; font-weight: bold; color: black; font-family: 'Arial', sans-serif;">조용재님</span>
                 </div>
                 <a class="btn btn-sm btn-outline-secondary" sec:authorize="isAnonymous()" th:href="@{/user/login}" style="margin: 3px;">Sign in</a>
                 <a class="btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:href="@{/user/logout}" style="margin: 3px;">Sign out</a>
                 <a class="btn btn-sm btn-outline-secondary" th:href="@{/user/signup}" style="margin: 3px;">Sign up</a>
-                <div class="floatMenu on">
-                    <a href="javascript:void(0);" onclick="window.open('http://localhost:8088/chatbot','chatbotEhwa','scrollbars=no,width=400,height=600,left=0,top=0');return false;">
-                        <img src="/chatbot.jpg" style="position: fixed; bottom: 50px; right: 180px; width: 100px; height: 100px;">
-                    </a>
-                </div>
             </div>
         </div>
     </header>

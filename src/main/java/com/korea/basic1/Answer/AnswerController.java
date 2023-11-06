@@ -19,7 +19,7 @@ import java.security.Principal;
 @RequestMapping("/answer")
 public class AnswerController {
     private final QuestionService questionService;
-    private final AnswerService answerService;
+    private final AnswerRepository.AnswerService answerService;
     private final UserService userService;
 
     @PreAuthorize("isAuthenticated()")

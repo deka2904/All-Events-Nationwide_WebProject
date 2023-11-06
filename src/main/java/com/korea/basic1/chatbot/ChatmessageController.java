@@ -4,26 +4,40 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.korea.basic1.chatbotRoom.ChatRoom;
+import com.korea.basic1.chatbotRoom.ChatRoomService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Controller
-public class ServerController {
-    private List<String> answerList = new ArrayList<>();
-    private List<String> queryList = new ArrayList<>();
+@RequiredArgsConstructor
+public class ChatmessageController {
+    private final ChatmessageService chatmessageService;
+    private final ChatRoomService chatRoomService;
 
     @GetMapping("/chatbot")
     public String main(Model model){
-        model.addAttribute("answerList", answerList);
-        model.addAttribute("queryList", queryList);
-        return "chat";
+        List<Chatmessage> chatmessageList = this.chatmessageService.getList();
+        List<ChatRoom> chatRoomList = this.chatRoomService.getList();
+        model.addAttribute("chatmessageList", chatmessageList);
+        model.addAttribute("chatRoomList", chatRoomList);
+        return "chatbot";
+    }
+
+    @GetMapping("/chatbot/{id}")
+    public String main(Model model, ChatRoom chatRoom){
+        List<Chatmessage> chatmessageList = this.chatmessageService.getListByRoomId(chatRoom);
+        List<ChatRoom> chatRoomList = this.chatRoomService.getList();
+        model.addAttribute("chatmessageList", chatmessageList);
+        model.addAttribute("chatRoomList", chatRoomList);
+        return "chatbot";
     }
 
     @PostMapping("/chatbot")
@@ -45,8 +59,8 @@ public class ServerController {
                 String AnswerData = (String) responseMap.get("Answer");
                 String QueryData = (String) responseMap.get("Query");
 
-                answerList.add(AnswerData);
-                queryList.add(QueryData);
+                this.chatmessageService.create(QueryData,AnswerData);
+
             } catch (JsonMappingException e) {
                 throw new RuntimeException(e);
             } catch (JsonProcessingException e) {

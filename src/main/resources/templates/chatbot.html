@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>웹 채팅</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}">
+    <script th:src="@{/bootstrap.min.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}">
+</head>
+<body>
+<div class="chat-container" style="display:flex; flex-direction:column; align-items:center; height:650px;">
+    <h1 class="h_tit" style="text-align:center; margin:5px 0 5px 0; height:8%;">
+        <span class="logo_txt" style="font-family: 'Cursive', cursive; font-size: 1.8rem; color: black;">Chatbot</span>
+    </h1>
+    <nav class="navbar bg-body-tertiary fixed-top">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="offcanvas offcanvas-start" style="max-width:40%;" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas-header justify-content-around border-bottom border-secondary">
+                    <form class="d-flex" role="search">
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="icon-sm shrink-0" height="15px" width="15px" xmlns="http://www.w3.org/2000/svg">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            New Chat..
+                        </button>
+                    </form>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body" style="padding:5px;">
+                    <ul>
+                        <li th:each="room : ${chatRoomList}" class="border border-3 border-black rounded p-2 m-2">
+                            <a th:href="@{|/chatbot/${room.id}|}" th:text="${room.RoomName}"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="chat-box" style="overflow-y:scroll; width:92%; max-width:92%; height:83%; border-radius:10px; padding:10px; margin:5px;
+    background:white; box-shadow:0px 0px 10px rgba(0,0,0,0.2); display:flex; flex-direction:column;">
+        <div th:each="chatmessage : ${chatmessageList}" class="message" style="display:flex; flex-direction:column;">
+            <div class="user-message" style="background:lightgray; box-shadow:0px 0px 10px rgba(0,0,0,0.2); align-self: flex-end;
+                margin-left: auto; border-radius: 10px; padding:10px; margin-bottom:10px; width:30%;">
+                <div class="toast-header">
+                    <img src="/User.jpg" style="width:15px; height: 15px;" class="rounded me-2" alt="No...">
+                    <strong class="me-auto">사용자</strong>
+                </div>
+                <div class="toast-body">
+                    <div th:text="${chatmessage.query}"></div>
+                </div>
+                <div class="toast-tail">
+                    <div style="text-align:end; font-size:12px; color:gray;" th:text="${#temporals.format(chatmessage.createDate, 'yyyy-MM-dd HH:mm')}"></div>
+                </div>
+            </div>
+            <div class="bot-message" style="background: white; box-shadow:0px 0px 10px rgba(0,0,0,0.2); align-self: flex-start;
+                margin-right: auto; border-radius: 10px; padding:10px; margin-bottom:20px; width:60%;">
+                <div class="toast-header">
+                    <img src="/chattingbot_img.png" style="width:15px; height: 15px;" class="rounded me-2" alt="No...">
+                    <strong class="me-auto">챗봇</strong>
+                </div>
+                <div class="toast-body">
+                    <div th:text="${chatmessage.answer}"></div>
+                </div>
+                <div class="toast-tail">
+                    <div style="text-align:end; font-size:12px; color:gray;" th:text="${#temporals.format(chatmessage.createDate, 'yyyy-MM-dd HH:mm')}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="inp_box" style="background:white; width:92%; height:9%; box-shadow:0px 0px 10px rgba(0,0,0,0.2); border-radius: 10px; padding:5px;">
+        <div class="inp_txt">
+            <form style="display:flex; padding:5px; border-radius: 5px;" id="chat-form" th:action="@{/chatbot}" method="post">
+                <input class="form-control me-2" style="flex:5; margin-right:10px;" type="text" name="query" id="query" placeholder="메시지를 입력하세요">
+                <button class="btn btn-outline-secondary" style="flex:1;" type="submit">전송</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var chatBtn = document.querySelector('.btn');
+        var body = document.querySelector('.chat-box');
+
+        // 새로 고침 시 저장된 스크롤 위치를 복원
+        window.addEventListener('beforeunload', function() {
+            localStorage.setItem('chatScrollPosition', body.scrollHeight);
+        });
+
+        // 스크롤 위치를 로컬 스토리지에서 가져와 설정
+        if (localStorage.getItem('chatScrollPosition')) {
+            var savedScrollPosition = parseInt(localStorage.getItem('chatScrollPosition'));
+            body.scrollTop = savedScrollPosition;
+            body.scrollTop = body.scrollHeight; // 스크롤을 제일 하단으로 이동
+        }
+
+        chatBtn.addEventListener('click', function(event) {
+            localStorage.setItem('chatScrollPosition', body.scrollHeight); // 스크롤 위치를 제일 하단으로 저장
+            body.scrollTop = body.scrollHeight;
+        });
+    });
+</script>
+</body>
+</html>

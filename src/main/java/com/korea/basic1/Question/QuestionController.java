@@ -2,7 +2,7 @@ package com.korea.basic1.Question;
 
 import com.korea.basic1.Answer.Answer;
 import com.korea.basic1.Answer.AnswerForm;
-import com.korea.basic1.Answer.AnswerService;
+import com.korea.basic1.Answer.AnswerRepository;
 import com.korea.basic1.User.SiteUser;
 import com.korea.basic1.User.UserService;
 import jakarta.validation.Valid;
@@ -20,7 +20,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -28,7 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class QuestionController {
     private final QuestionService questionService;
-    private final AnswerService answerService;
+    private final AnswerRepository.AnswerService answerService;
     private final UserService userService;
 
     @GetMapping("/categorylist/{id}")
