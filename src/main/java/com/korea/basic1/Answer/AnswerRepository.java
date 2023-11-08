@@ -13,5 +13,5 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface AnswerRepository extends JpaRepository<Answer, Integer> {
-    Page<Answer> findAll(Pageable pageable);
+    Page<Answer> findAllByQuestion(Question question, Pageable pagealbe);   // 질문 하나당 답변 페이징
 }

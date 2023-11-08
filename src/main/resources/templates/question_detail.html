@@ -10,6 +10,10 @@
                 <div class="card-body">
                     <div class="card-text" style="white-space: pre-line;" th:utext="${@commonUtil.markdown(question.content)}"></div>
                     <div class="d-flex justify-content-end">
+                        <div th:if="${question.modifyDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
+                            <div class="mb-2">modified at</div>
+                            <div th:text="${#temporals.format(question.modifyDate, 'yyyy-MM-dd HH:mm')}"></div>
+                        </div>
                         <div class="badge bg-light text-dark p-2 text-start">
                             <div class="mb-2">
                                 <span th:if="${question.author != null}" th:text="${question.author.nickname}"></span>
@@ -39,8 +43,8 @@
     <div class="container" style="display:flex; padding:0;">
         <div class="container" style="padding:0; width:65%">
             <div class="map_wrap">
-                <input class="address" type="hidden" th:value="${question.address}">
-                <div id="map" style="width:100%;height:730px; border:1px solid gray; border-radius: 10px;"></div>
+                <input class="address" type="hidden" th:value="${question.jibunAddress}">
+                <div id="map" style="width:100%;height:850px; border:1px solid gray; border-radius: 10px;"></div>
             </div>
         </div>
         <div class="container" style="width:35%;">
@@ -53,10 +57,15 @@
                 <div style="height:60%;">
                     <div class="h-100 rounded-3">
                         <!-- 답변 반복 시작 -->
-                        <div class="card my-3" th:each="answer : ${paging}">
+                        <div class="card my-3" th:each="answer : ${answerPaging}">
+                            <a th:id="|answer_${answer.id}|"></a>
                             <div class="card-body">
                                 <div class="card-text" style="white-space: pre-line;" th:utext="${@commonUtil.markdown(answer.content)}"></div>
                                 <div class="d-flex justify-content-end">
+                                    <div th:if="${answer.modifyDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
+                                        <div class="mb-2">modified at</div>
+                                        <div th:text="${#temporals.format(answer.modifyDate, 'yyyy-MM-dd HH:mm')}"></div>
+                                    </div>
                                     <div class="badge bg-light text-dark p-2 text-start">
                                         <div class="mb-2">
                                             <span th:if="${answer.author != null}" th:text="${answer.author.nickname}"></span>
@@ -64,27 +73,37 @@
                                         <div th:text="${#temporals.format(answer.createDate, 'yyyy-MM-dd HH:mm')}"></div>
                                     </div>
                                 </div>
+                                <div class="my-3">
+                                    <a th:href="@{|/answer/modify/${answer.id}|}" class="btn btn-sm btn-outline-secondary"
+                                       sec:authorize="isAuthenticated()"
+                                       th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author.userid}"
+                                       th:text="수정"></a>
+                                    <a href="javascript:void(0);" th:data-uri="@{|/answer/delete/${answer.id}|}"
+                                       class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
+                                       th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author.userid}"
+                                       th:text="삭제"></a>
+                                </div>
                             </div>
                         </div>
                         <!-- 답변 반복 끝  -->
                     </div>
                 </div>
                 <!-- 페이징처리 시작 -->
-                <div th:if="${!paging.isEmpty()}">
+                <div th:if="${!answerPaging.isEmpty()}">
                     <ul class="pagination justify-content-center">
-                        <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
-                            <a class="page-link" aria-label="Previous" th:href="@{|?page=${paging.number-1}|}">
+                        <li class="page-item" th:classappend="${!answerPaging.hasPrevious} ? 'disabled'">
+                            <a class="page-link" aria-label="Previous" th:href="@{|?page=${answerPaging.number-1}|}">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
-                        <li th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
-                            th:if="${page >= paging.number-5 and page <= paging.number+5}"
-                            th:classappend="${page == paging.number} ? 'active'"
+                        <li th:each="page: ${#numbers.sequence(0, answerPaging.totalPages-1)}"
+                            th:if="${page >= answerPaging.number-5 and page <= answerPaging.number+5}"
+                            th:classappend="${page == answerPaging.number} ? 'active'"
                             class="page-item">
                             <a th:text="${page}" class="page-link" th:href="@{|?page=${page}|}"></a>
                         </li>
-                        <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
-                            <a class="page-link" aria-label="Next" th:href="@{|?page=${paging.number+1}|}">
+                        <li class="page-item" th:classappend="${!answerPaging.hasNext} ? 'disabled'">
+                            <a class="page-link" aria-label="Next" th:href="@{|?page=${answerPaging.number+1}|}">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
@@ -94,9 +113,7 @@
                 <div style="height:30%;">
                     <!-- 답변 작성 -->
                     <form th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}" method="post" class="my-3">
-                        <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
-                            <div th:each="err : ${#fields.allErrors()}" th:text="${err}" />
-                        </div>
+                        <div th:replace="~{form_errors :: formErrorsFragment}"></div>
                         <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control" rows="10"></textarea>
                         <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control" rows="10"></textarea>
                         <input type="submit" value="답변등록" class="btn btn-primary my-2">
@@ -144,44 +161,26 @@
     // 지도를 생성합니다
     var map = new kakao.maps.Map(mapContainer, mapOption);
 
-   // 장소 검색 객체를 생성합니다
-    var ps = new kakao.maps.services.Places();
+    // 주소-좌표 변환 객체를 생성합니다
+    var geocoder = new kakao.maps.services.Geocoder();
 
-    // 키워드로 장소를 검색합니다
-    ps.keywordSearch(address, placesSearchCB);
+    // 주소로 좌표를 검색합니다
+    geocoder.addressSearch(address, function(result, status) {
 
-    // 키워드 검색 완료 시 호출되는 콜백함수 입니다
-    function placesSearchCB (data, status, pagination) {
-        if (status === kakao.maps.services.Status.OK) {
-            // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
-            // LatLngBounds 객체에 좌표를 추가합니다
-            var bounds = new kakao.maps.LatLngBounds();
+        // 정상적으로 검색이 완료됐으면
+         if (status === kakao.maps.services.Status.OK) {
 
-            // 첫 번째 장소만 표시하도록 설정
-            var firstPlace = data[0];
-            displayMarker(firstPlace);
-            bounds.extend(new kakao.maps.LatLng(firstPlace.y, firstPlace.x));
+            var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-            // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
-            map.setBounds(bounds);
+            // 결과값으로 받은 위치를 마커로 표시합니다
+            var marker = new kakao.maps.Marker({
+                map: map,
+                position: coords
+            });
+
+            // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+            map.setCenter(coords);
         }
-    }
-
-    // 지도에 마커를 표시하는 함수입니다
-    function displayMarker(place) {
-
-        // 마커를 생성하고 지도에 표시합니다
-        var marker = new kakao.maps.Marker({
-            map: map,
-            position: new kakao.maps.LatLng(place.y, place.x)
-        });
-
-        // 마커에 클릭이벤트를 등록합니다
-        kakao.maps.event.addListener(marker, 'click', function() {
-            // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
-            infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
-            infowindow.open(map, marker);
-        });
-    }
+    });
 </script>
 </html>

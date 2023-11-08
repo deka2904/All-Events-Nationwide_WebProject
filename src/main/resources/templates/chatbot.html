@@ -39,16 +39,15 @@
                             </svg>
                             <div class="chatDiv">
                                 <a th:href="@{|/chatbot/${room.id}|}" style="overflow: hidden;" th:text="${room.RoomName}" id="roomLink"></a>
-                                <input type="text" class="d-none" style="width:80%;" th:value="${room.RoomName}" id="roomInput" />
                             </div>
                             <div class="chatroomBtn">
-                                <a class="toggleButton btn btn-outline-secondary" style="--bs-btn-font-size: .7rem; padding:7px;">
+                                <a th:href="@{|/chatbot/modify/${room.id}|}" class="btn btn-outline-secondary" style="--bs-btn-font-size: .7rem; padding:7px;">
                                     <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="icon-sm" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M12 20h9"></path>
                                         <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                                     </svg>
                                 </a>
-                                <a href="javascript:void(0);" th:data-uri="@{|/chatbot/delete/${id}|}" class="delete btn btn-outline-secondary" style="--bs-btn-font-size: 0.7rem; padding:7px;">
+                                <a href="javascript:void(0);" th:data-uri="@{|/chatbot/delete/${room.id}|}" class="delete btn btn-outline-secondary" style="--bs-btn-font-size: 0.7rem; padding:7px;">
                                     <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="icon-sm" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                                         <polyline points="3 6 5 6 21 6"></polyline>
                                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -70,7 +69,7 @@
                 margin-left: auto; border-radius: 10px; padding:10px; margin-bottom:10px; width:30%;">
                 <div class="toast-header">
                     <img src="/User.jpg" style="width:15px; height: 15px;" class="rounded me-2" alt="No...">
-                    <strong class="me-auto">사용자</strong>
+                    <strong class="me-auto" th:text="${#authentication.principal.nickname}"></strong>
                 </div>
                 <div class="toast-body">
                     <div th:text="${chatmessage.query}"></div>
@@ -143,25 +142,25 @@
                 });
             });
 
-           const buttonList = document.querySelectorAll(".chatroomList");
-           const roomLink = document.getElementById("roomLink");   // a태그
-           const roomInput = document.getElementById("roomInput"); // input
+<!--           const buttonList = document.querySelectorAll(".chatroomList");-->
+<!--           const roomLink = document.getElementById("roomLink");   // a태그-->
+<!--           const roomInput = document.getElementById("roomInput"); // input-->
 
-            buttonList.forEach(function(chatroomBtn) {
-                const toggleBtn = chatroomBtn.children[2].children[0];
-                const roomLink = chatroomBtn.children[1].children[0];
-                const roomInput = chatroomBtn.children[1].children[1];
+<!--            buttonList.forEach(function(chatroomBtn) {-->
+<!--                const toggleBtn = chatroomBtn.children[2].children[0];-->
+<!--                const roomLink = chatroomBtn.children[1].children[0];-->
+<!--                const roomInput = chatroomBtn.children[1].children[1];-->
 
-                toggleBtn.addEventListener("click", function() {
-                   if (roomLink.style.display === "none") {
-                       roomLink.style.display = "block";
-                       roomInput.setAttribute("class", "d-none");
-                   } else {
-                       roomLink.style.display = "none";
-                        roomInput.setAttribute("class", "");
-                   }
-               });
-           });
+<!--                toggleBtn.addEventListener("click", function() {-->
+<!--                   if (roomLink.style.display === "none") {-->
+<!--                       roomLink.style.display = "block";-->
+<!--                       roomInput.setAttribute("class", "d-none");-->
+<!--                   } else {-->
+<!--                       roomLink.style.display = "none";-->
+<!--                        roomInput.setAttribute("class", "");-->
+<!--                   }-->
+<!--               });-->
+<!--           });-->
         });
     </script>
 </div>

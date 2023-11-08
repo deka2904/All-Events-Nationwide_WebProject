@@ -26,7 +26,19 @@ public class Question {
     private String content;
 
     @Column(columnDefinition = "VARCHAR(200) NOT NULL")
-    private String address;
+    private String postcode;
+
+    @Column(columnDefinition = "VARCHAR(200) NOT NULL")
+    private String roadAddress;
+
+    @Column(columnDefinition = "VARCHAR(200) NOT NULL")
+    private String jibunAddress;
+
+    @Column(columnDefinition = "VARCHAR(200) NOT NULL")
+    private String detailAddress;
+
+    @Column(columnDefinition = "VARCHAR(200) NOT NULL")
+    private String extraAddress;
 
     private LocalDateTime createDate;
 

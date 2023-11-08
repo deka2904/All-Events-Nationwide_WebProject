@@ -1,10 +1,12 @@
 package com.korea.basic1.chatbotRoom;
 
+import com.korea.basic1.Answer.Answer;
 import com.korea.basic1.DataNotFoundException;
 import com.korea.basic1.Question.Question;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +27,10 @@ public class ChatRoomService {
         }
     }
 
+    public void modify(ChatRoom chatRoom, String RoomName) {
+        chatRoom.setRoomName(RoomName);
+        this.chatRoomRepository.save(chatRoom);
+    }
     public ChatRoom saveDefaultChatRoomNum(){
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.setRoomName("new_chat");

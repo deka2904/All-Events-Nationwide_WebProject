@@ -10,6 +10,8 @@
     <link rel="stylesheet" type="text/css" th:href="@{/style.css}">
     <!-- kakao Map API -->
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7ee6f5a5f71e859c2649a378e7750b51&libraries=services"></script>
+    <!-- kakao Map Address API -->
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <title>All events nationwide</title>
 </head>
 <body>
@@ -35,7 +37,9 @@
             </div>
             <div class="col-4 d-flex justify-content-end align-items-center">
                 <div>
-                    <span style=" margin: 0 10px 0 10px; font-size: 15px; font-weight: bold; color: black; font-family: 'Arial', sans-serif;">조용재님</span>
+                    <span style="margin: 0 10px 0 10px; font-size: 15px; font-weight: bold; color: black;"
+                          th:if="${#authorization.expression('isAuthenticated()')}"
+                          th:text="${#authentication.principal.nickname}"></span>
                 </div>
                 <a class="btn btn-sm btn-outline-secondary" sec:authorize="isAnonymous()" th:href="@{/user/login}" style="margin: 3px;">Sign in</a>
                 <a class="btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:href="@{/user/logout}" style="margin: 3px;">Sign out</a>

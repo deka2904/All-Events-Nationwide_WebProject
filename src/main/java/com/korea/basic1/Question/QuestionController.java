@@ -4,13 +4,17 @@ import com.korea.basic1.Answer.Answer;
 import com.korea.basic1.Answer.AnswerForm;
 import com.korea.basic1.Answer.AnswerRepository;
 import com.korea.basic1.Answer.AnswerService;
+import com.korea.basic1.CustomUser;
 import com.korea.basic1.User.SiteUser;
 import com.korea.basic1.User.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,13 +36,17 @@ public class QuestionController {
     private final UserService userService;
 
     @GetMapping("/categorylist/{id}")
-    public String categorylist(Model model, @RequestParam(value="page", defaultValue="0") int page, @RequestParam(value = "kw", defaultValue = "") String kw, @PathVariable("id") Integer id) {
+    public String categorylist(Model model, @RequestParam(value="page", defaultValue="0") int page, @RequestParam(value = "kw", defaultValue = "") String kw,
+                               @PathVariable("id") Integer id, Authentication authentication) {
+        if (authentication != null) {
+            CustomUser user = (CustomUser) authentication.getPrincipal();
+        }
         if (id.equals(0)){
             Page<Question> paging = this.questionService.getList(page, kw);
             model.addAttribute("paging", paging);
             model.addAttribute("kw", kw);
             model.addAttribute("id", 0);
-        }else{
+        } else {
             Page<Question> paging = this.questionService.getCategoryList(page, id);
             model.addAttribute("paging", paging);
             model.addAttribute("id", id);
@@ -49,8 +57,8 @@ public class QuestionController {
     @GetMapping("/detail/{id}")
     public String detail(Model model, @PathVariable("id") Integer id, @RequestParam(value="page", defaultValue="0") int page, AnswerForm answerForm) {
         Question question = this.questionService.getQuestion(id);
-        Page<Answer> paging = this.answerService.getList(page);
-        model.addAttribute("paging", paging);
+        Page<Answer> answerPaging = this.answerService.getList(question, page);
+        model.addAttribute("answerPaging", answerPaging);
         model.addAttribute("question", question);
         return "question_detail";
     }
@@ -69,8 +77,8 @@ public class QuestionController {
             return "question_form";
         }
         SiteUser siteUser = this.userService.getUser(principal.getName());
-        this.questionService.create(questionForm.getSubject(), questionForm.getContent(), questionForm.getAddress(),
-                questionForm.getCategory(), siteUser, file);
+        this.questionService.create(questionForm.getSubject(), questionForm.getContent(), questionForm.getPostcode(), questionForm.getRoadAddress(), questionForm.getJibunAddress(),
+                questionForm.getDetailAddress(), questionForm.getExtraAddress(), questionForm.getCategory(), siteUser, file);
         return "redirect:/";
     }
     @PreAuthorize("isAuthenticated()")
@@ -83,9 +91,11 @@ public class QuestionController {
         questionForm.setSubject(question.getSubject());
         questionForm.setContent(question.getContent());
         questionForm.setCategory(question.getCategory());
-        questionForm.setAddress(question.getAddress());
-        questionForm.setFilename(question.getFilename());
-
+        questionForm.setPostcode(question.getPostcode());
+        questionForm.setRoadAddress(question.getRoadAddress());
+        questionForm.setJibunAddress(question.getJibunAddress());
+        questionForm.setDetailAddress(question.getDetailAddress());
+        questionForm.setExtraAddress(question.getExtraAddress());
         return "question_form";
     }
 
@@ -122,7 +132,8 @@ public class QuestionController {
                 e.printStackTrace();
             }
         }
-        this.questionService.modify(question, questionForm.getSubject(), questionForm.getContent(), questionForm.getAddress(), questionForm.getCategory());
+        this.questionService.modify(question, questionForm.getSubject(), questionForm.getContent(),questionForm.getPostcode(),
+                questionForm.getRoadAddress(), questionForm.getJibunAddress(), questionForm.getDetailAddress(), questionForm.getExtraAddress(), questionForm.getCategory());
         return String.format("redirect:/question/detail/%s", id);
     }
 
@@ -138,7 +149,7 @@ public class QuestionController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
-    public String questionDelete(Principal principal, @PathVariable("id") Integer id) {
+    public String questionDelete(Principal principal, @PathVariable("id") Integer id, Authentication authentication) {
         Question question = this.questionService.getQuestion(id);
 
         if (!question.getAuthor().getUserid().equals(principal.getName())) {

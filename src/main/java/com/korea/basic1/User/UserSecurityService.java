@@ -1,8 +1,11 @@
 package com.korea.basic1.User;
 
+import com.korea.basic1.CustomUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,6 +35,11 @@ public class UserSecurityService implements UserDetailsService {
         } else {
             authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
         }
-        return new User(siteUser.getUserid(), siteUser.getPassword(), authorities);
+
+        CustomUser customUser = new CustomUser(siteUser.getUserid(), siteUser.getPassword(), authorities);
+        customUser.setNickname(siteUser.getNickname());
+        customUser.setEmail(siteUser.getEmail());
+
+        return customUser;
     }
 }

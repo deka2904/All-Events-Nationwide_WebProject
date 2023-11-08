@@ -37,7 +37,7 @@ public class QuestionService {
         return this.questionRepository.findAll();
     }
 
-    public void create(String subject, String content, String address, Category category, SiteUser user, MultipartFile file) throws Exception {
+    public void create(String subject, String content, String postcode, String roadAddress, String jibunAddress, String detailAddress, String extraAddress, Category category, SiteUser user, MultipartFile file) throws Exception {
         String projectPath = imgLocation; // 파일 저장 위치 = projectPath
         UUID uuid = UUID.randomUUID(); // 식별자. 랜덤으로 이름 생성
         String fileName;
@@ -59,7 +59,11 @@ public class QuestionService {
         Question q = new Question();
         q.setSubject(subject);
         q.setContent(content);
-        q.setAddress(address);
+        q.setPostcode(postcode);
+        q.setRoadAddress(roadAddress);
+        q.setJibunAddress(jibunAddress);
+        q.setDetailAddress(detailAddress);
+        q.setExtraAddress(extraAddress);
         q.setCreateDate(LocalDateTime.now());
         q.setCategory(category);
         q.setAuthor(user);
@@ -98,10 +102,15 @@ public class QuestionService {
         }
     }
 
-    public void modify(Question question, String subject, String content, String address, Category category) {
+    public void modify(Question question, String subject, String content, String postcode, String roadAddress, String jibunAddress, String detailAddress, String extraAddress,
+                       Category category) {
         question.setSubject(subject);
         question.setContent(content);
-        question.setAddress(address);
+        question.setPostcode(postcode);
+        question.setRoadAddress(roadAddress);
+        question.setJibunAddress(jibunAddress);
+        question.setDetailAddress(detailAddress);
+        question.setExtraAddress(extraAddress);
         question.setModifyDate(LocalDateTime.now());
         question.setCategory(category);
         this.questionRepository.save(question);
