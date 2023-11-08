@@ -3,6 +3,7 @@ package com.korea.basic1.Question;
 import com.korea.basic1.Answer.Answer;
 import com.korea.basic1.Answer.AnswerForm;
 import com.korea.basic1.Answer.AnswerRepository;
+import com.korea.basic1.Answer.AnswerService;
 import com.korea.basic1.User.SiteUser;
 import com.korea.basic1.User.UserService;
 import jakarta.validation.Valid;
@@ -27,7 +28,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class QuestionController {
     private final QuestionService questionService;
-    private final AnswerRepository.AnswerService answerService;
+    private final AnswerService answerService;
     private final UserService userService;
 
     @GetMapping("/categorylist/{id}")
@@ -45,7 +46,7 @@ public class QuestionController {
         return "question_list";
     }
 
-    @GetMapping(value = "/detail/{id}")
+    @GetMapping("/detail/{id}")
     public String detail(Model model, @PathVariable("id") Integer id, @RequestParam(value="page", defaultValue="0") int page, AnswerForm answerForm) {
         Question question = this.questionService.getQuestion(id);
         Page<Answer> paging = this.answerService.getList(page);
@@ -68,7 +69,7 @@ public class QuestionController {
             return "question_form";
         }
         SiteUser siteUser = this.userService.getUser(principal.getName());
-        this.questionService.create(questionForm.getSubject(), questionForm.getContent(),
+        this.questionService.create(questionForm.getSubject(), questionForm.getContent(), questionForm.getAddress(),
                 questionForm.getCategory(), siteUser, file);
         return "redirect:/";
     }
@@ -82,7 +83,9 @@ public class QuestionController {
         questionForm.setSubject(question.getSubject());
         questionForm.setContent(question.getContent());
         questionForm.setCategory(question.getCategory());
-        questionForm.setFile(null); // 파일을 업로드하도록 설정
+        questionForm.setAddress(question.getAddress());
+        questionForm.setFilename(question.getFilename());
+
         return "question_form";
     }
 
@@ -119,7 +122,7 @@ public class QuestionController {
                 e.printStackTrace();
             }
         }
-        this.questionService.modify(question, questionForm.getSubject(), questionForm.getContent(), questionForm.getCategory());
+        this.questionService.modify(question, questionForm.getSubject(), questionForm.getContent(), questionForm.getAddress(), questionForm.getCategory());
         return String.format("redirect:/question/detail/%s", id);
     }
 

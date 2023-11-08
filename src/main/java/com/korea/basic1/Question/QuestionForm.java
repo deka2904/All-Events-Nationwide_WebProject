@@ -21,5 +21,10 @@ public class QuestionForm {
     @NotNull(message = "카테고리 선택은 필수항목입니다.")
     private Category category;
 
+    @NotNull(message = "지역은 필수항목입니다.")
+    private String address;
+
     private MultipartFile file; // 파일 업로드를 위한 필드
+    private String filename; // 파일 이름을 저장할 필드
+
 }

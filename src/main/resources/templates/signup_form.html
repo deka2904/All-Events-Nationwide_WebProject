@@ -11,12 +11,11 @@
         <a class="blog-header-logo text-body-emphasis text-decoration-none" th:href="@{|/question/categorylist/0|}"
            style="font-family: 'Cursive', cursive; font-size: 2rem; color: black;">All events nationwide</a>
     </div>
-
     <div>
         <h4>Sign_up</h4>
         <form th:action="@{/user/signup}" th:object="${userCreateForm}" method="post">
             <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
-                <div th:each="err : ${#fields.allErrors()}" th:text="${err}" />
+                <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
             </div>
             <div class="mb-3">
                 <label for="userid" class="form-label">ID</label>

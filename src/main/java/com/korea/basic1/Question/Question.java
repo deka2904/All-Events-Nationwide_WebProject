@@ -25,6 +25,9 @@ public class Question {
     @Column(columnDefinition = "TEXT NOT NULL")
     private String content;
 
+    @Column(columnDefinition = "VARCHAR(200) NOT NULL")
+    private String address;
+
     private LocalDateTime createDate;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)

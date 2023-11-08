@@ -15,4 +15,23 @@ public class ChatRoomService {
     public List<ChatRoom> getList(){
         return this.chatRoomRepository.findAll();
     }
+
+    public ChatRoom getChatRoom(Integer id) {
+        Optional<ChatRoom> chatRoom = this.chatRoomRepository.findById(id);
+        if (chatRoom.isPresent()) {
+            return chatRoom.get();
+        } else {
+            throw new DataNotFoundException("chatRoom not found");
+        }
+    }
+
+    public ChatRoom saveDefaultChatRoomNum(){
+        ChatRoom chatRoom = new ChatRoom();
+        chatRoom.setRoomName("new_chat");
+        return this.chatRoomRepository.save(chatRoom);
+    }
+
+    public void delete(ChatRoom chatRoom) {
+        this.chatRoomRepository.delete(chatRoom);
+    }
 }
