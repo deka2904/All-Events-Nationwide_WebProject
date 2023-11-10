@@ -1,0 +1,46 @@
+<html layout:decorate="~{adminlayout}" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.w3.org/1999/xhtml">
+<div layout:fragment="admincontent" class="container my-3" style="padding:0;">
+    <table class="table">
+        <thead class="table-dark" style="text-align:center;">
+        <tr>
+            <th>사용자 번호</th>
+            <th style="width:40%">사용자 ID</th>
+            <th>사용자 이메일</th>
+            <th>사용자 닉네임</th>
+            <th>사용자 관리</th>
+        </tr>
+        </thead>
+        <tbody style="text-align:center;">
+            <tr th:each="adminuser : ${adminUserList}" th:classappend="${adminuser.role == 'admin' ? 'text-primary' : 'text-warning'}">
+                <td th:text="${adminuser.id}"></td>
+                <td th:text="${adminuser.userid}"></td>
+                <td th:text="${adminuser.email}"></td>
+                <td th:text="${adminuser.nickname}"></td>
+                <td>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            관리자 등록
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li th:if="${adminuser.role != 'admin'}"><a class="dropdown-item" th:href="@{|/manager/userUpdate/${adminuser.userid}|}">ADMIN</a></li>
+                            <li th:if="${adminuser.role != 'user'}"><a class="dropdown-item" th:href="@{|/manager/userUpdate/${adminuser.userid}|}">USER</a></li>
+                        </ul>
+                    </div>
+                    <a href="javascript:void(0);" th:data-uri="@{|/manager/userDelete/${adminuser.userid}|}" class="delete btn btn-sm btn-outline-danger" th:text="'삭제'"></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script layout:fragment="script" type='text/javascript'>
+    const delete_elements = document.getElementsByClassName("delete");
+    Array.from(delete_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            if(confirm("정말로 삭제하시겠습니까?")) {
+                location.href = this.dataset.uri;
+            };
+        });
+    });
+</script>
+</html>

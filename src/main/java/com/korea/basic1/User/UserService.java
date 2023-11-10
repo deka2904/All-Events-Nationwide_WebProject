@@ -1,11 +1,15 @@
 package com.korea.basic1.User;
 
 import com.korea.basic1.DataNotFoundException;
+import com.korea.basic1.Question.Question;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -15,12 +19,22 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public List<SiteUser> getUserList(String role){
+        if ("admin".equals(role) || "user".equals(role)) {
+            List<String> roles = Arrays.asList("admin", "user");
+            return userRepository.findAllByRoleIn(roles);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
     public SiteUser create(String userid, String nickname, String password, String email) {
         SiteUser user = new SiteUser();
         user.setUserid(userid);
         user.setNickname(nickname);
         user.setPassword(passwordEncoder.encode(password));
         user.setEmail(email);
+        user.setRole("user");
         this.userRepository.save(user);
         return user;
     }
@@ -36,5 +50,9 @@ public class UserService {
 
     public SiteUser getUserByNickname(String nickname) {
         return userRepository.findByNickname(nickname);
+    }
+
+    public void delete(SiteUser siteUser) {
+        this.userRepository.delete(siteUser);
     }
 }

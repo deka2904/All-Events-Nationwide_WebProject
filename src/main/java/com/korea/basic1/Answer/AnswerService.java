@@ -20,6 +20,10 @@ import java.util.Optional;
 public class AnswerService {
     private final AnswerRepository answerRepository;
 
+    public List<Answer> getAnswerList() {
+        return this.answerRepository.findAll();
+    }
+
     public Page<Answer> getList(Question question, int page) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createDate"));
@@ -54,4 +58,5 @@ public class AnswerService {
     public void delete(Answer answer) {
         this.answerRepository.delete(answer);
     }
+
 }

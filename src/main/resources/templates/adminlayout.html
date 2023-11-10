@@ -4,6 +4,8 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
+    <script src="/bootstrap.bundle.js"></script>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}">
     <!-- sbb CSS -->
@@ -14,9 +16,20 @@
 <div class="h-100 container my-3" style="padding: 0;">
     <header class="lh-1 py-3" style="border-bottom: 2px solid;">
         <div class="row flex-nowrap justify-content-center align-items-center">
+            <div class="col-4 pt-1"></div>
             <div class="col-4 text-center">
                 <a class="blog-header-logo text-body-emphasis text-decoration-none" th:href="@{|/question/categorylist/0|}"
                    style="font-family: 'Cursive', cursive; font-size: 2rem; color: black;">All events nationwide</a>
+            </div>
+            <div class="col-4 d-flex justify-content-end align-items-center ms-auto">
+                <div>
+                    <span style="margin: 0 10px 0 10px; font-size: 15px; font-weight: bold; color: black;"
+                          th:if="${#authorization.expression('isAuthenticated()')}"
+                          th:text="${#authentication.principal.nickname}"></span>
+                </div>
+                <a th:href="@{/manager/questionlist}" class="btn btn-sm btn-outline-dark m-1" th:text="Board"></a>
+                <a th:href="@{/manager/userlist}" class="btn btn-sm btn-outline-dark m-1" th:text="User"></a>
+                <a th:href="@{/manager/answerlist}" class="btn btn-sm btn-outline-dark m-1" th:text="Answer"></a>
             </div>
         </div>
     </header>

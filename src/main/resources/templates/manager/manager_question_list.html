@@ -10,7 +10,7 @@
                 <th>카테고리</th>
                 <th>게시글 작성자</th>
                 <th>게시글 작성일</th>
-                <th>게시글 삭제</th>
+                <th>게시글 관리</th>
             </tr>
         </thead>
         <tbody style="text-align:center;">
@@ -22,12 +22,7 @@
             <td th:text="${adminquestion.author.nickname}"></td>
             <td th:text="${#temporals.format(adminquestion.createDate, 'yyyy년 MM월 dd일 HH:mm')}"></td>
             <td>
-                <button class="btn btn-sm btn-outline-secondary">삭제
-<!--                    <a href="javascript:void(0);" th:data-uri="@{|/manager/delete/${question.id}|}"-->
-<!--                       class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"-->
-<!--                       th:text="삭제">-->
-<!--                    </a>-->
-                </button>
+                <a href="javascript:void(0);" th:data-uri="@{|/manager/questionDelete/${adminquestion.id}|}" class="delete btn btn-sm btn-outline-danger" th:text="삭제"></a>
             </td>
         </tr>
         </tbody>

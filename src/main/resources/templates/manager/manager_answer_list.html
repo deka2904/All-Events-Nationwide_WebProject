@@ -1,0 +1,37 @@
+<html layout:decorate="~{adminlayout}" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.w3.org/1999/xhtml">
+<div layout:fragment="admincontent" class="container my-3" style="padding:0;">
+    <table class="table">
+        <thead class="table-dark" style="text-align:center;">
+        <tr>
+            <th>댓글 번호</th>
+            <th>댓글 내용</th>
+            <th>댓글 작성자</th>
+            <th>댓글 작성일</th>
+            <th>댓글 관리</th>
+        </tr>
+        </thead>
+        <tbody style="text-align:center;">
+        <tr th:each="adminanswer : ${adminAnswerList}">
+            <td th:text="${adminanswer.id}"></td>
+            <td style="max-width: 100px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" th:text="${adminanswer.content}"></td>
+            <td th:text="${adminanswer.author.nickname}"></td>
+            <td th:text="${#temporals.format(adminanswer.createDate, 'yyyy년 MM월 dd일 HH:mm')}"></td>
+            <td>
+                <a href="javascript:void(0);" th:data-uri="@{|/manager/answerDelete/${adminanswer.id}|}" class="delete btn btn-sm btn-outline-danger" th:text="삭제"></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script layout:fragment="script" type='text/javascript'>
+    const delete_elements = document.getElementsByClassName("delete");
+    Array.from(delete_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            if(confirm("정말로 삭제하시겠습니까?")) {
+                location.href = this.dataset.uri;
+            };
+        });
+    });
+</script>
+</html>

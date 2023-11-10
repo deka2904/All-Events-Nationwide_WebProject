@@ -11,9 +11,7 @@
         <span class="logo_txt" style="font-family: 'Cursive', cursive; font-size: 1.8rem; color: black;">Chatbot</span>
     </h1>
     <div>
-<!--        <form th:action="@{/chatbot/modify/{id}(id=${id})}" th:object="${chatRoomForm}" method="post" enctype="multipart/form-data">-->
         <form th:action="@{|/chatbot/modify/${#authentication.principal.nickname}/${id}|}" th:object="${chatRoomForm}" method="post" enctype="multipart/form-data">
-
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <div class="mb-3">
                 <label for="roomname" class="form-label">채팅방 제목</label>

@@ -29,12 +29,16 @@ public class UserSecurityService implements UserDetailsService {
             throw new UsernameNotFoundException("사용자를 찾을수 없습니다.");
         }
         SiteUser siteUser = _siteUser.get();
+
         List<GrantedAuthority> authorities = new ArrayList<>();
-        if ("admin".equals(userid)) {
+        if ("super_admin".equals(siteUser.getRole())) {
+            authorities.add(new SimpleGrantedAuthority(UserRole.SUPER_ADMIN.getValue()));
+        } else if("admin".equals(siteUser.getRole())){
             authorities.add(new SimpleGrantedAuthority(UserRole.ADMIN.getValue()));
-        } else {
+        }else {
             authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
         }
+
 
         CustomUser customUser = new CustomUser(siteUser.getUserid(), siteUser.getPassword(), authorities);
         customUser.setNickname(siteUser.getNickname());
