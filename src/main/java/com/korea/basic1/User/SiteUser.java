@@ -1,8 +1,11 @@
 package com.korea.basic1.User;
 
+import com.korea.basic1.chatbotRoom.ChatRoom;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,6 +23,10 @@ public class SiteUser {
 
     private String password;
 
-    @Column(unique = true)
     private String email;
+
+    private String role;
+
+    @OneToMany(mappedBy = "siteUser", cascade = CascadeType.REMOVE)
+    private List<ChatRoom> chatRoom;
 }

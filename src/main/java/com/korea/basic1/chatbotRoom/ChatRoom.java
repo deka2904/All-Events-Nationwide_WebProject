@@ -1,5 +1,6 @@
 package com.korea.basic1.chatbotRoom;
 
+import com.korea.basic1.User.SiteUser;
 import com.korea.basic1.chatbot.Chatmessage;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,4 +21,7 @@ public class ChatRoom {
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE)
     private List<Chatmessage> chatmessageList;
+
+    @ManyToOne
+    private SiteUser siteUser;
 }

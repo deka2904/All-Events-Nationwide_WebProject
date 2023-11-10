@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}">
+</head>
+<body>
+<div class="chat-container" style="display: flex; flex-direction: column; justify-content: center; padding:10px;">
+    <div class="header" style="height: 10%; width: 95%; text-align: center; margin: 0 auto;">
+        <h1 class="h_tit" style="display:flex; flex-direction:column; text-align:center; margin:30px 0 0 0;">
+            <p class="logo_txt" style="font-family: 'Cursive', cursive; font-size: 1.8rem; color: black; margin: 0 auto;">Chatbot</p>
+            <p></p>
+            <p class="chat_name" style="font-size: 1rem;color: black;margin-bottom: 13px;" th:text="|${#authentication.principal.nickname}님|"></p>
+        </h1>
+    </div>
+    <div class="header2" style="height: 10%;">
+        <div style="text-align:center; margin:0 0 5px 0; padding:5px; border-top:2px solid gray; border-bottom:2px solid gray;" th:text="|<<${#lists.size(chatRoomList)}개의 채팅방이 있습니다.>>|"></div>
+    </div>
+    <div class="offcanvas-body" style="box-shadow:0px 0px 10px rgba(0,0,0,0.2);border-radius: 10px; padding : 10px; height: 400px; padding:5px;overflow-y:scroll">
+        <ul>
+            <li th:each="room : ${chatRoomList}" class="chatroomList border border-3 border-black rounded p-2 m-2" style="display:flex; align-items: center;">
+                <div class="chatImg" style="margin-right:20px;">
+                    <svg class="icon-sm" stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </div>
+                <div class="chatDiv" style="width:100px;overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">
+                    <a th:href="@{|/chatbotList/${#authentication.principal.nickname}/${room.id}|}" th:text="${room.RoomName}" id="roomLink"></a>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="tail" style="height:10%;">
+        <form class="d-flex" style="height: 10%;justify-content: end;padding: 20px;" th:action="@{|/chatbot/create/${#authentication.principal.nickname}|}" method="post">
+            <button class="btn btn-outline-secondary" type="submit">
+                <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="icon-sm shrink-0" height="15px" width="15px" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                New Chat..
+            </button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

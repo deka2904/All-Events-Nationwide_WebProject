@@ -10,9 +10,25 @@
     </div>
     <div class="container" style="position: relative; margin-bottom : 30px;">
         <div class="floatMenu on">
-            <a href="javascript:void(0);" onclick="window.open('http://localhost:8088/chatbot','chatbot','scrollbars=no,width=500,height=700,left=0,top=0');return false;">
-                <img src="/chatbot.jpg" style="position:absolute; top:90%; right:-8%; width: 90px; height: 90px;">
+            <a th:href="@{|/manager/list|}">
+                <img src="/manager.png" style="position:absolute; top: 60%; right:-6%; width: 70px; height: 70px; border:1px solid gray; border-radius: 50%; overflow: hidden;">
             </a>
+            <a href="javascript:void(0);" th:onclick="chatpop(); return false;">
+                <img src="/chatbot.jpg" style="position:absolute; top: 80%; right:-6%; width: 70px; height: 70px; border:1px solid gray; border-radius: 50%; overflow: hidden;">
+            </a>
+            <script th:inline="javascript">
+                function chatpop() {
+                console.log(1212);
+                    let authentication = [[${#authentication}]];
+                    console.log();
+                    if(authentication.principal == 'anonymousUser') {
+                        alert('로그인 후 사용해주세요');
+                    } else {
+                        let username = authentication.principal.nickname;
+                        window.open('http://localhost:8088/chatbot/' + username,'chatbot','scrollbars=no,width=500,height=700,left=0,top=0')
+                    }
+                }
+            </script>
         </div>
         <div class="row row-cols-3">
             <div th:each="question : ${paging}" class="col" style="padding: 0;">

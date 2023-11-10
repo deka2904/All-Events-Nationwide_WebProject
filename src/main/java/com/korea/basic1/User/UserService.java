@@ -33,4 +33,8 @@ public class UserService {
             throw new DataNotFoundException("siteuser not found");
         }
     }
+
+    public SiteUser getUserByNickname(String nickname) {
+        return userRepository.findByNickname(nickname);
+    }
 }

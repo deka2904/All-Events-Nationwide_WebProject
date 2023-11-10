@@ -4,9 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.korea.basic1.User.SiteUser;
+import com.korea.basic1.User.UserRepository;
+import com.korea.basic1.User.UserService;
 import com.korea.basic1.chatbotRoom.ChatRoom;
 import com.korea.basic1.chatbotRoom.ChatRoomService;
 import groovy.lang.GString;
+import groovy.lang.Interceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
@@ -15,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.HtmlUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
@@ -23,28 +29,42 @@ import java.util.Map;
 public class ChatmessageController {
     private final ChatmessageService chatmessageService;
     private final ChatRoomService chatRoomService;
+    private final UserService userService;
 
-    @GetMapping("/chatbot")
-    public String main(Model model){
-        List<ChatRoom> chatRoomList = this.chatRoomService.getList();
-        model.addAttribute("chatRoomList", chatRoomList);
-        return "chatbot";
+    @GetMapping("/chatbot/{nickname}")
+    public String main(Model model, @PathVariable("nickname") String nickname) {
+        SiteUser siteUser = this.userService.getUserByNickname(nickname);
+        if (siteUser != null) {
+            List<ChatRoom> chatRoomList = siteUser.getChatRoom();
+            model.addAttribute("chatRoomList", chatRoomList);
+        } else {
+            model.addAttribute("errorMessage", "사용자를 찾을 수 없습니다.");
+        }
+        return "chatbot/chatbot_main";
     }
 
-    @GetMapping("/chatbot/{id}")
-    public String main(Model model, @PathVariable("id") Integer id, ChatRoom chatRoom){
+    @GetMapping("/chatbotList/{nickname}/{id}")
+    public String main(Model model, @PathVariable("nickname") String nickname, @PathVariable("id") Integer id, ChatRoom chatRoom) {
+        SiteUser siteUser = this.userService.getUserByNickname(nickname);
+
+        if (siteUser != null) {
+            List<ChatRoom> chatRoomList = siteUser.getChatRoom();
+            model.addAttribute("chatRoomList", chatRoomList);
+        } else {
+            model.addAttribute("errorMessage", "사용자를 찾을 수 없습니다.");
+        }
+
         List<Chatmessage> chatmessageList = this.chatmessageService.getListByRoomId(chatRoom);
-        List<ChatRoom> chatRoomList = this.chatRoomService.getList();
         ChatRoom name = this.chatRoomService.getChatRoom(id);
         model.addAttribute("chatmessageList", chatmessageList);
-        model.addAttribute("chatRoomList", chatRoomList);
         model.addAttribute("id", id);
-        model.addAttribute("name", name.getRoomName()); // ChatRoom 객체의 이름 필드 사용
-        return "chatbot";
+        model.addAttribute("name", name.getRoomName());
+        return "chatbot/chatbot_list";
     }
 
-    @PostMapping("/chatbot/{id}")
-    public String sendDataToServer(Model model, @PathVariable("id") Integer id,  String query) {
+    @PostMapping("/chatbotList/{nickname}/{id}")
+    public String sendDataToServer(String query, @PathVariable("nickname") String nickname, @PathVariable("id") Integer id) throws UnsupportedEncodingException  {
+        String encodedNickname = URLEncoder.encode(nickname, "UTF-8");
         try {
             String data = String.format("{\"query\":\"%s\"}", HtmlUtils.htmlEscape(query));
             RestTemplate restTemplate = new RestTemplate();
@@ -78,6 +98,6 @@ public class ChatmessageController {
             e.printStackTrace();
             // 예외 처리
         }
-        return "redirect:/chatbot/" + id;
+        return "redirect:/chatbotList/" + encodedNickname + "/" + id;
     }
 }

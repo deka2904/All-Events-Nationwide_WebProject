@@ -1,0 +1,46 @@
+<html layout:decorate="~{adminlayout}" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<div layout:fragment="admincontent" class="container my-3" style="padding:0;">
+    <table class="table">
+        <thead class="table-dark" style="text-align:center;">
+            <tr>
+                <th>게시글 번호</th>
+                <th style="width:40%">게시글 제목</th>
+                <th>게시글 내용</th>
+                <th>카테고리</th>
+                <th>게시글 작성자</th>
+                <th>게시글 작성일</th>
+                <th>게시글 삭제</th>
+            </tr>
+        </thead>
+        <tbody style="text-align:center;">
+        <tr th:each="adminquestion : ${adminQuestionList}">
+            <td th:text="${adminquestion.id}"></td>
+            <td th:text="${adminquestion.subject}"></td>
+            <td style="max-width: 100px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" th:text="${adminquestion.content}"></td>
+            <td th:text="${adminquestion.category.category}"></td>
+            <td th:text="${adminquestion.author.nickname}"></td>
+            <td th:text="${#temporals.format(adminquestion.createDate, 'yyyy년 MM월 dd일 HH:mm')}"></td>
+            <td>
+                <button class="btn btn-sm btn-outline-secondary">삭제
+<!--                    <a href="javascript:void(0);" th:data-uri="@{|/manager/delete/${question.id}|}"-->
+<!--                       class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"-->
+<!--                       th:text="삭제">-->
+<!--                    </a>-->
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script layout:fragment="script" type='text/javascript'>
+    const delete_elements = document.getElementsByClassName("delete");
+    Array.from(delete_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            if(confirm("정말로 삭제하시겠습니까?")) {
+                location.href = this.dataset.uri;
+            };
+        });
+    });
+</script>
+</html>

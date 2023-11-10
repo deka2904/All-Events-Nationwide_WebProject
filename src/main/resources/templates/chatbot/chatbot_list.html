@@ -20,7 +20,7 @@
             </button>
             <div class="offcanvas offcanvas-start" style="max-width:50%;" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
                 <div class="offcanvas-header justify-content-around border-bottom border-secondary">
-                    <form class="d-flex" th:action="@{/chatbot/create}" method="post">
+                    <form class="d-flex" th:action="@{|/chatbot/create/${#authentication.principal.nickname}|}" method="post">
                         <button class="btn btn-outline-secondary" type="submit">
                             <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="icon-sm shrink-0" height="15px" width="15px" xmlns="http://www.w3.org/2000/svg">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -34,20 +34,22 @@
                 <div class="offcanvas-body" style="padding:5px;">
                     <ul>
                         <li th:each="room : ${chatRoomList}" class="chatroomList border border-3 border-black rounded p-2 m-2" style="display:flex; align-items: center; justify-content:space-between;">
-                            <svg class="icon-sm" stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                            </svg>
-                            <div class="chatDiv">
-                                <a th:href="@{|/chatbot/${room.id}|}" style="overflow: hidden;" th:text="${room.RoomName}" id="roomLink"></a>
+                            <div class="chatImg">
+                                <svg class="icon-sm" stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="chatDiv" style="width:100px;overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">
+                                <a th:href="@{|/chatbotList/${#authentication.principal.nickname}/${room.id}|}" th:text="${room.RoomName}" id="roomLink"></a>
                             </div>
                             <div class="chatroomBtn">
-                                <a th:href="@{|/chatbot/modify/${room.id}|}" class="btn btn-outline-secondary" style="--bs-btn-font-size: .7rem; padding:7px;">
+                                <a th:href="@{|/chatbot/modify/${#authentication.principal.nickname}/${room.id}|}" class="btn btn-outline-secondary" style="--bs-btn-font-size: .7rem; padding:7px;">
                                     <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="icon-sm" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M12 20h9"></path>
                                         <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                                     </svg>
                                 </a>
-                                <a href="javascript:void(0);" th:data-uri="@{|/chatbot/delete/${room.id}|}" class="delete btn btn-outline-secondary" style="--bs-btn-font-size: 0.7rem; padding:7px;">
+                                <a href="javascript:void(0);" th:data-uri="@{|/chatbot/delete/${#authentication.principal.nickname}/${room.id}|}" class="delete btn btn-outline-secondary" style="--bs-btn-font-size: 0.7rem; padding:7px;">
                                     <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="icon-sm" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                                         <polyline points="3 6 5 6 21 6"></polyline>
                                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -69,7 +71,7 @@
                 margin-left: auto; border-radius: 10px; padding:10px; margin-bottom:10px; width:30%;">
                 <div class="toast-header">
                     <img src="/User.jpg" style="width:15px; height: 15px;" class="rounded me-2" alt="No...">
-                    <strong class="me-auto" th:text="${#authentication.principal.nickname}"></strong>
+                    <strong class="me-auto" th:text="${#authentication.principal.nickname} ?: '사용자'"></strong>
                 </div>
                 <div class="toast-body">
                     <div th:text="${chatmessage.query}"></div>
@@ -95,7 +97,7 @@
     </div>
     <div class="inp_box" style="background:white; width:92%; height:9%; box-shadow:0px 0px 10px rgba(0,0,0,0.2); border-radius: 10px; padding:5px;">
         <div class="inp_txt">
-            <form style="display:flex; padding:5px; border-radius: 5px;" id="chat-form" th:action="@{|/chatbot/${id}|}" method="post">
+            <form style="display:flex; padding:5px; border-radius: 5px;" id="chat-form" th:action="@{|/chatbotList/${#authentication.principal.nickname}/${id}|}" method="post">
                 <input class="form-control me-2" style="flex:5; margin-right:10px;" type="text" name="query" id="query" placeholder="메시지를 입력하세요">
                 <button class="btn btn-outline-secondary" style="flex:1;" type="submit">전송</button>
             </form>

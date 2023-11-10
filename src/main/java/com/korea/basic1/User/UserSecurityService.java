@@ -39,7 +39,6 @@ public class UserSecurityService implements UserDetailsService {
         CustomUser customUser = new CustomUser(siteUser.getUserid(), siteUser.getPassword(), authorities);
         customUser.setNickname(siteUser.getNickname());
         customUser.setEmail(siteUser.getEmail());
-
         return customUser;
     }
 }

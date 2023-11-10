@@ -14,4 +14,8 @@ public class Category {
 
     @Column(length = 200)
     private String category;
+
+    public String getName() {
+        return category;
+    }
 }

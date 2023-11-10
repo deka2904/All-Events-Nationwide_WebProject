@@ -4,6 +4,7 @@ import com.korea.basic1.Answer.Answer;
 import com.korea.basic1.Answer.AnswerForm;
 import com.korea.basic1.Answer.AnswerRepository;
 import com.korea.basic1.Answer.AnswerService;
+import com.korea.basic1.Category.Category;
 import com.korea.basic1.CustomUser;
 import com.korea.basic1.User.SiteUser;
 import com.korea.basic1.User.UserService;
@@ -51,22 +52,40 @@ public class QuestionController {
             model.addAttribute("paging", paging);
             model.addAttribute("id", id);
         }
-        return "question_list";
+        return "board/question_list";
     }
 
     @GetMapping("/detail/{id}")
     public String detail(Model model, @PathVariable("id") Integer id, @RequestParam(value="page", defaultValue="0") int page, AnswerForm answerForm) {
         Question question = this.questionService.getQuestion(id);
-        Page<Answer> answerPaging = this.answerService.getList(question, page);
-        model.addAttribute("answerPaging", answerPaging);
-        model.addAttribute("question", question);
-        return "question_detail";
+
+        if(question.getCategory().getName().equals("자유게시판")){
+            Page<Answer> answerPaging = this.answerService.getList(question, page);
+            model.addAttribute("answerPaging", answerPaging);
+            model.addAttribute("question", question);
+            return "board/question_detail";
+        } else if (question.getCategory().getName().equals("문의사항")) {
+            Page<Answer> answerPaging = this.answerService.getList(question, page);
+            model.addAttribute("answerPaging", answerPaging);
+            model.addAttribute("question", question);
+            return "board/question_detail";
+        } else if (question.getCategory().getName().equals("문의사항")) {
+            Page<Answer> answerPaging = this.answerService.getList(question, page);
+            model.addAttribute("answerPaging", answerPaging);
+            model.addAttribute("question", question);
+            return "board/question_detail";
+        }else{
+            Page<Answer> answerPaging = this.answerService.getList(question, page);
+            model.addAttribute("answerPaging", answerPaging);
+            model.addAttribute("question", question);
+            return "board/question_detail_events";
+        }
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String questionCreate(QuestionForm questionForm) {
-        return "question_form";
+        return "board/question_form";
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -74,7 +93,7 @@ public class QuestionController {
     public String questionCreate(@Valid QuestionForm questionForm, BindingResult bindingResult,
                                  Principal principal, MultipartFile file) throws Exception {
         if (bindingResult.hasErrors()) {
-            return "question_form";
+            return "board/question_form";
         }
         SiteUser siteUser = this.userService.getUser(principal.getName());
         this.questionService.create(questionForm.getSubject(), questionForm.getContent(), questionForm.getPostcode(), questionForm.getRoadAddress(), questionForm.getJibunAddress(),
@@ -83,7 +102,7 @@ public class QuestionController {
     }
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
-    public String questionModify(QuestionForm questionForm, @PathVariable("id") Integer id, Principal principal) {
+    public String questionModify(QuestionForm questionForm, @PathVariable("id") Integer id, Principal principal, Model model) {
         Question question = this.questionService.getQuestion(id);
         if (!question.getAuthor().getUserid().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
@@ -96,44 +115,22 @@ public class QuestionController {
         questionForm.setJibunAddress(question.getJibunAddress());
         questionForm.setDetailAddress(question.getDetailAddress());
         questionForm.setExtraAddress(question.getExtraAddress());
-        return "question_form";
+        return "board/question_form";
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
     public String questionModify(@Valid QuestionForm questionForm, BindingResult bindingResult,
-                                 Principal principal, @PathVariable("id") Integer id) {
+                                 Principal principal, @PathVariable("id") Integer id) throws Exception {
         if (bindingResult.hasErrors()) {
-            return "question_form";
+            return "board/question_form";
         }
         Question question = this.questionService.getQuestion(id);
         if (!question.getAuthor().getUserid().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
-
-        MultipartFile newFile = questionForm.getFile();
-        String projectPath = questionService.imgLocation;
-
-        if (newFile == null || newFile.isEmpty()) {
-            String defaultImageFileName = "no_img.jpg";
-            String defaultImageFilePath = projectPath + defaultImageFileName;
-
-            question.setFilename(defaultImageFileName);
-            question.setFilepath(defaultImageFilePath);
-        } else {
-            UUID uuid = UUID.randomUUID();
-            String fileName = uuid + "_" + newFile.getOriginalFilename();
-            File saveFile = new File(projectPath, fileName);
-            try {
-                newFile.transferTo(saveFile);
-                question.setFilename(fileName);
-                question.setFilepath(projectPath + fileName);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         this.questionService.modify(question, questionForm.getSubject(), questionForm.getContent(),questionForm.getPostcode(),
-                questionForm.getRoadAddress(), questionForm.getJibunAddress(), questionForm.getDetailAddress(), questionForm.getExtraAddress(), questionForm.getCategory());
+                questionForm.getRoadAddress(), questionForm.getJibunAddress(), questionForm.getDetailAddress(), questionForm.getExtraAddress(), questionForm.getCategory(), questionForm.getFile());
         return String.format("redirect:/question/detail/%s", id);
     }
 
