@@ -1,7 +1,9 @@
 package com.korea.basic1.User;
 
+import com.korea.basic1.Category.Category;
 import com.korea.basic1.DataNotFoundException;
 import com.korea.basic1.Question.Question;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,5 +56,23 @@ public class UserService {
 
     public void delete(SiteUser siteUser) {
         this.userRepository.delete(siteUser);
+    }
+
+    @PostConstruct
+    public void init() {
+        saveDefaultAdmin();
+    }
+
+
+    public void saveDefaultAdmin() {
+        if (userRepository.findByuserid("admin").isEmpty()) {
+            SiteUser siteUser = new SiteUser();
+            siteUser.setUserid("admin");
+            siteUser.setRole("super_admin");
+            siteUser.setPassword(passwordEncoder.encode("1234"));
+            siteUser.setEmail("admin@naver.com");
+            siteUser.setNickname("관리자");
+            userRepository.save(siteUser);
+        }
     }
 }

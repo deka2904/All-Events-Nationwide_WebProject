@@ -16,7 +16,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/photo/**")
                 //웹브라우저에 입력하는 url에 /photo 로 시작하는 경우 uploadPath에 설정한 폴더 기준으로 파일을 읽어오도록 설정
 
-                .addResourceLocations(uploadPath);
+                .addResourceLocations("file:///" + AppConfig.getImageFileDirPath());
                 //로컬컴퓨터에 저장된 파일을 읽어올 root경로
     }
 }

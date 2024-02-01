@@ -1,5 +1,6 @@
 package com.korea.basic1.Question;
 
+import com.korea.basic1.AppConfig;
 import com.korea.basic1.Category.Category;
 import com.korea.basic1.DataNotFoundException;
 import com.korea.basic1.User.SiteUser;
@@ -38,7 +39,7 @@ public class QuestionService {
     }
 
     public void create(String subject, String content, String postcode, String roadAddress, String jibunAddress, String detailAddress, String extraAddress, Category category, SiteUser user, MultipartFile file) throws Exception {
-        String projectPath = imgLocation; // 파일 저장 위치 = projectPath
+        String projectPath = AppConfig.getImageFileDirPath(); // 파일 저장 위치 = projectPath
         UUID uuid = UUID.randomUUID(); // 식별자. 랜덤으로 이름 생성
         String fileName;
 
@@ -104,7 +105,7 @@ public class QuestionService {
 
     public void modify(Question question, String subject, String content, String postcode, String roadAddress, String jibunAddress, String detailAddress, String extraAddress,
                        Category category, MultipartFile file) throws Exception{
-        String projectPath = imgLocation;
+        String projectPath = AppConfig.getImageFileDirPath();;
 
         if (file.getOriginalFilename().equals("")){
             //새 파일이 없을 때
